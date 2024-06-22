@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { DATA } from "@/data/resume";
 import Link from "next/link";
 import Markdown from "react-markdown";
+import Image from "next/image";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -17,18 +18,29 @@ export default function Page() {
       <section id="hero">
         <div className="mx-auto w-full max-w-2xl space-y-8">
           <div className="gap-2 flex justify-between">
-            <div className="flex-col flex flex-1 space-y-1.5">
-              <BlurFadeText
-                delay={BLUR_FADE_DELAY}
-                className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
-                yOffset={8}
-                text={`Hi, I'm ${DATA.name.split(" ")[0]} 👋`}
-              />
-              <BlurFadeText
-                className="max-w-[600px] md:text-xl"
-                delay={BLUR_FADE_DELAY}
-                text={DATA.description}
-              />
+            <div className="flex-col flex flex-1 space-y-3">
+              <div className="flex items-baseline space-x-1">
+                <BlurFadeText
+                  delay={BLUR_FADE_DELAY}
+                  className="text-3xl font-bold tracking-normal sm:text-5xl xl:text-6xl/none"
+                  yOffset={8}
+                  text={`Hi, I'm ${DATA.name.split(" ")[0]}`}
+                />
+                {/* <Image
+                src="/hi_emoji.webp"
+                alt="Hi emoji"
+                width={534}
+                height={534}
+                className="h-10 w-10 self-start"
+              /> */}
+              </div>
+              <div className="mt-3">
+                <BlurFadeText
+                  className="max-w-[600px] md:text-xl"
+                  delay={BLUR_FADE_DELAY}
+                  text={DATA.description}
+                />
+              </div>
             </div>
             <BlurFade delay={BLUR_FADE_DELAY}>
               <Avatar className="size-28 border">
@@ -123,9 +135,9 @@ export default function Page() {
                   Check out my latest work
                 </h2>
                 <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  I&apos;ve worked on a variety of projects, from simple
-                  websites to complex web applications. Here are a few of my
-                  favorites.
+                  I&apos;ve worked on a variety of mobile applications and
+                  open-source projects, focusing on Android development and
+                  cross-platform solutions. Here are a few of my favorites.
                 </p>
               </div>
             </div>
@@ -152,31 +164,29 @@ export default function Page() {
           </div>
         </div>
       </section>
-      <section id="hackathons">
+      <section id="talks">
         <div className="space-y-12 w-full py-12">
           <BlurFade delay={BLUR_FADE_DELAY * 13}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
-                  Hackathons
+                  Talks
                 </div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                  I like building things
+                  Sharing Knowledge and Inspiring Developers
                 </h2>
                 <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  During my time in university, I attended{" "}
-                  {DATA.hackathons.length}+ hackathons. People from around the
-                  country would come together and build incredible things in 2-3
-                  days. It was eye-opening to see the endless possibilities
-                  brought to life by a group of motivated and passionate
-                  individuals.
+                  During my professional journey, I have spoken at{" "}
+                  {DATA.talks.length} conference. Speaking at Kotlin Conf was a
+                  highlight, and I look forward to continuing to s hare my
+                  knowledge and experiences at future events.
                 </p>
               </div>
             </div>
           </BlurFade>
           <BlurFade delay={BLUR_FADE_DELAY * 14}>
             <ul className="mb-4 ml-4 divide-y divide-dashed border-l">
-              {DATA.hackathons.map((project, id) => (
+              {DATA.talks.map((project, id) => (
                 <BlurFade
                   key={project.title + project.dates}
                   delay={BLUR_FADE_DELAY * 15 + id * 0.05}
@@ -206,20 +216,38 @@ export default function Page() {
                 Get in Touch
               </h2>
               <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Want to chat? Just shoot me a dm{" "}
+                Fancy a chat? Drop me a DM{" "}
                 <Link
                   href={DATA.contact.social.X.url}
                   className="text-blue-500 hover:underline"
                 >
-                  with a direct question on twitter
+                  on Twitter
                 </Link>{" "}
-                and I&apos;ll respond whenever I can. I will ignore all
-                soliciting.
+                with your question, and I&apos;ll get back to you as soon as I
+                can. Or feel free to{" "}
+                <Link
+                  href={DATA.contact.social.Email.url}
+                  className="text-blue-500 hover:underline"
+                >
+                  send me an email
+                </Link>
+                . Let&apos;s connect!
               </p>
             </div>
           </BlurFade>
         </div>
       </section>
+      <BlurFade delay={BLUR_FADE_DELAY * 4}>
+        <footer className="flex flex-row justify-center prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
+          <p className="self-end">
+            Website template thanks to{" "}
+            <a href="https://github.com/dillionverma/portfolio" target="_blank">
+              Dillion Verma&apos;s Portfolio
+            </a>
+            .
+          </p>
+        </footer>
+      </BlurFade>
     </main>
   );
 }
