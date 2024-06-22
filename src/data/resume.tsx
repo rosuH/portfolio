@@ -1,5 +1,6 @@
 import { Icons } from "@/components/icons";
 import { Mail } from "lucide-react";
+import { title } from "process";
 
 export const DATA = {
   name: "rosu",
@@ -83,6 +84,7 @@ export const DATA = {
         "An open-source tool for adding watermarks to photos to protect privacy. The project is well-received and actively maintained.",
       technologies: ["Kotlin", "Android"],
       image: "/ewm.webp",
+      video: "",
       links: [
         {
           type: "GitHub",
@@ -99,6 +101,7 @@ export const DATA = {
         "An IDEA plugin designed to optimize the commit message writing experience using AI.",
       technologies: ["Kotlin", "AI"],
       image: "/ai-commit.webp",
+      video: "",
       links: [
         {
           type: "Website",
@@ -115,6 +118,7 @@ export const DATA = {
         "An open-source file picker library for Android, providing a smooth and efficient file selection experience.",
       technologies: ["Kotlin", "Android"],
       image: "/afp.webp",
+      video: "",
       links: [
         {
           type: "GitHub",
@@ -134,7 +138,7 @@ export const DATA = {
       image: "/kotlin_conf_2024.webp",
       links: [
         {
-          type: "GitHub",
+          title: "GitHub",
           href: "https://github.com/rosuH/Playground/tree/main/KotlinConf24/KMPUI",
           icon: <Icons.github className="size-3" />,
         },
