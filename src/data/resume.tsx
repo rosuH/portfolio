@@ -46,6 +46,7 @@ export const DATA = {
       start: "October 2021",
       end: "Present",
       logoUrl: "/tme.webp",
+      badges: [],
       description:
         "Lead the development of live streaming, real-time audio-video interaction, and PK features. Spearheaded the research and implementation of Kotlin Multiplatform (KMP) cross-platform capabilities, enhancing development efficiency.",
     },
@@ -57,6 +58,7 @@ export const DATA = {
       start: "March 2019",
       end: "September 2021",
       logoUrl: "/tenclass.webp",
+      badges: [],
       description:
         "Maintained and iterated an online education app, focusing on features such as audio editing and media playback.",
     },
