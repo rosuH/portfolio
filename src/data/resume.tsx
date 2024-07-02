@@ -11,7 +11,7 @@ export const DATA = {
   description:
     "A passionate and experienced Android Developer with a knack for delivering high-quality mobile applications. Enthusiastic about Kotlin Multiplatform and live streaming technologies.",
   summary:
-    "With 5 years of experience in Android development, I specialize in live streaming, real-time audio-video interactions, and cross-platform capabilities using Kotlin Multiplatform (KMP). I currently work at Tencent Music Entertainment Group, leading the development of innovative mobile features and exploring new technologies. I’m actively looking for overseas opportunities that offer a great work-life balance and the chance to contribute to exciting projects.",
+    "With 5 years of Android development experience, I have expertise in live streaming, real-time audio-video interactions, and cross-platform development using Kotlin Multiplatform (KMP). Currently, I am working at Tencent Music Entertainment Group, focusing on innovative mobile features and new technology exploration. I am seeking overseas opportunities that offer a great work-life balance and allow me to contribute to exciting and impactful projects.",
   avatarUrl: "/me.webp",
   skills: [
     "Kotlin",
@@ -61,8 +61,20 @@ export const DATA = {
       logoUrl: "/tenclass.webp",
       badges: [],
       description:
-        "Maintained and iterated an online education app, focusing on features such as audio editing and media playback.",
+        "Developed and maintained Android apps, focusing on audio and video features. Utilized MPG123 and FFmpeg for audio processing, and MediaCodec for video. Built and optimized custom views, reducing crash rate from 0.7% to 0.1%. Established CI for Android builds using Jenkins. Designed and implemented a coroutine-based networking framework and a versatile file upload tool. Integrated IM SDK and optimized message handling for better performance.",
     },
+    {
+      company: "Tuputech",
+      href: "https://www.tuputech.com/",
+      location: "Guangzhou, China",
+      title: "Android Software Engineer Intern",
+      start: "May 2018",
+      end: "December 2018",
+      logoUrl: "/tuputech.jpg",
+      badges: [],
+      description:
+        "Assisted in the iteration and maintenance of facial recognition and video apps. Researched Apache Tika and used FFmpeg for video validation. Evaluated and integrated Baidu and ArcSoft liveness detection SDKs with confidence filters. Improved image batch import and file picker to prevent OOM issues.",
+    }    
   ],
   education: [
     {
