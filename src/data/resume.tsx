@@ -53,7 +53,7 @@ export const DATA = {
     },
     {
       company: "Shifang Ronghai Technology",
-      href: "#",
+      href: "https://www.tenclass.com/",
       location: "Shenzhen, China",
       title: "Android Software Engineer",
       start: "March 2019",
