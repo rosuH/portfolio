@@ -12,7 +12,7 @@ export const DATA = {
     "A passionate and experienced Android Developer with a knack for delivering high-quality mobile applications. Enthusiastic about Kotlin Multiplatform and live streaming technologies.",
   summary:
     "With 5 years of Android development experience, I have expertise in live streaming, real-time audio-video interactions, and cross-platform development using Kotlin Multiplatform (KMP). Currently, I am working at Tencent Music Entertainment Group, focusing on innovative mobile features and new technology exploration. I am seeking overseas opportunities that offer a great work-life balance and allow me to contribute to exciting and impactful projects.",
-  avatarUrl: "/me.webp",
+  avatarUrl: "/me.png",
   skills: [
     "Kotlin",
     "Java",
