@@ -9,7 +9,7 @@ export const DATA = {
   location: "Shenzhen, China",
   locationLink: "https://www.google.com/maps/place/Shenzhen,+Guangdong+Province,+China",
   description:
-    "Hi, I’m rosu 👋 An Android engineer with 6 years of experience building live streaming and real-time AV features. I enjoy working with Kotlin Multiplatform and exploring how mobile tech can scale across platforms. Right now I’m at Tencent Music Entertainment, but I’m also looking for overseas roles where I can build cool stuff and keep a balanced life.",
+    "An Android engineer with 6 years of experience building live streaming and real-time AV features. I enjoy working with Kotlin Multiplatform and exploring how mobile tech can scale across platforms. Right now I’m at Tencent Music Entertainment, but I’m also looking for overseas roles where I can build cool stuff and keep a balanced life.",
   summary:
     "Senior Android Engineer · Real‑time A/V · Kotlin Multiplatform",
   avatarUrl: "/me.png",
