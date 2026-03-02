@@ -1,88 +1,105 @@
 import { Icons } from "@/components/icons";
-import { Mail } from "lucide-react";
-import { title } from "process";
+import { HomeIcon, NotebookIcon } from "lucide-react";
+import { Java } from "@/components/ui/svgs/java";
+import { Nodejs } from "@/components/ui/svgs/nodejs";
+import { Python } from "@/components/ui/svgs/python";
+import { Typescript } from "@/components/ui/svgs/typescript";
 
 export const DATA = {
   name: "rosu",
-  initials: "rosu",
+  initials: "RH",
   url: "https://rosuh.me",
   location: "Shenzhen, China",
-  locationLink: "https://www.google.com/maps/place/Shenzhen,+Guangdong+Province,+China",
+  locationLink:
+    "https://www.google.com/maps/place/Shenzhen,+Guangdong+Province,+China",
   description:
-    "An Android engineer with 6 years of experience building live streaming and real-time AV features. I enjoy working with Kotlin Multiplatform and exploring how mobile tech can scale across platforms. Right now I’m at Tencent Music Entertainment, but I’m also looking for overseas roles where I can build cool stuff and keep a balanced life.",
+    "Senior Android engineer focused on real-time audio/video features and Kotlin Multiplatform.",
   summary:
-    "Senior Android Engineer · Real‑time A/V · Kotlin Multiplatform",
+    "I have 6+ years of experience building Android products with a focus on live streaming and RTC. I currently work at [Tencent Music Entertainment](https://www.tencentmusic.com/en-us/) and enjoy shipping reliable mobile infrastructure and developer-friendly abstractions.",
   avatarUrl: "/me.png",
   skills: [
-    "Kotlin",
-    "Java",
-    "Android",
-    "Jetpack Compose",
-    "Kotlin Multiplatform",
-    "Python",
+    { name: "Kotlin", icon: undefined },
+    { name: "Java", icon: Java },
+    { name: "Android", icon: undefined },
+    { name: "Jetpack Compose", icon: undefined },
+    { name: "Kotlin Multiplatform", icon: undefined },
+    { name: "Python", icon: Python },
+    { name: "TypeScript", icon: Typescript },
+    { name: "Node.js", icon: Nodejs },
+  ],
+  navbar: [
+    { href: "/", icon: HomeIcon, label: "Home" },
+    { href: "https://blog.rosuh.me", icon: NotebookIcon, label: "Blog" },
   ],
   contact: {
     email: "hi@rosuh.me",
+    tel: "",
     social: {
       GitHub: {
+        name: "GitHub",
         url: "https://github.com/rosuH",
         icon: Icons.github,
+        navbar: true,
       },
       X: {
+        name: "X",
         url: "https://x.com/rosu_h",
         icon: Icons.x,
+        navbar: true,
       },
       Email: {
+        name: "Email",
         url: "mailto:hi@rosuh.me",
-        icon: Mail,
-      }
+        icon: Icons.email,
+        navbar: false,
+      },
     },
   },
+
   work: [
     {
       company: "Tencent Music Entertainment Group",
       href: "https://www.tencentmusic.com/en-us/",
+      badges: [],
       location: "Shenzhen, China",
       title: "Senior Android Software Engineer",
+      logoUrl: "/tme.webp",
       start: "October 2021",
       end: "Present",
-      logoUrl: "/tme.webp",
-      badges: [],
       description:
-        "Lead the development of live streaming, real-time audio-video interaction, and PK features. Spearheaded the research and implementation of Kotlin Multiplatform (KMP) cross-platform capabilities, enhancing development efficiency.",
+        "Led development of live streaming, real-time audio/video interaction, and PK features. Drove Kotlin Multiplatform exploration and implementation to improve cross-platform development efficiency.",
     },
     {
       company: "Shifang Ronghai Technology",
       href: "https://www.tenclass.com/",
+      badges: [],
       location: "Shenzhen, China",
       title: "Android Software Engineer",
+      logoUrl: "/tenclass.webp",
       start: "March 2019",
       end: "September 2021",
-      logoUrl: "/tenclass.webp",
-      badges: [],
       description:
-        "Developed and maintained Android apps, focusing on audio and video features. Utilized MPG123 and FFmpeg for audio processing, and MediaCodec for video. Built and optimized custom views, reducing crash rate from 0.7% to 0.1%. Established CI for Android builds using Jenkins. Designed and implemented a coroutine-based networking framework and a versatile file upload tool. Integrated IM SDK and optimized message handling for better performance.",
+        "Developed and maintained Android apps focused on audio/video experiences. Built and optimized custom views, reduced crash rate, established Jenkins CI, and implemented coroutine-based networking and robust file upload tooling.",
     },
     {
       company: "Tuputech",
       href: "https://www.tuputech.com/",
+      badges: [],
       location: "Guangzhou, China",
       title: "Android Software Engineer Intern",
+      logoUrl: "/tuputech.jpg",
       start: "May 2018",
       end: "December 2018",
-      logoUrl: "/tuputech.jpg",
-      badges: [],
       description:
-        "Assisted in the iteration and maintenance of facial recognition and video apps. Researched Apache Tika and used FFmpeg for video validation. Evaluated and integrated Baidu and ArcSoft liveness detection SDKs with confidence filters. Improved image batch import and file picker to prevent OOM issues.",
-    }    
+        "Contributed to facial recognition and video applications. Worked on video validation pipelines, liveness detection integration, and memory-safe image/file workflows.",
+    },
   ],
   education: [
     {
       school: "Jiaying University",
       href: "https://www.jyu.edu.cn/",
-      logoUrl: "/jyu.webp",
       degree: "Bachelor's Degree in Computer Science and Technology",
-      location: "China",
+      logoUrl: "/jyu.webp",
       start: "2015",
       end: "2019",
     },
@@ -92,11 +109,10 @@ export const DATA = {
       title: "Easy Watermark",
       href: "https://github.com/rosuH/EasyWatermark",
       dates: "July 2020 - Present",
+      active: true,
       description:
-        "An open-source tool for adding watermarks to photos to protect privacy. The project is well-received and actively maintained.",
+        "An open-source tool for adding watermarks to photos to protect privacy.",
       technologies: ["Kotlin", "Android"],
-      image: "/ewm.webp",
-      video: "",
       links: [
         {
           type: "GitHub",
@@ -104,16 +120,17 @@ export const DATA = {
           icon: <Icons.github className="size-3" />,
         },
       ],
+      image: "/ewm.webp",
+      video: "",
     },
     {
       title: "AICommit",
       href: "http://aicommit.app/",
       dates: "Personal Project",
+      active: true,
       description:
-        "An IDEA plugin designed to optimize the commit message writing experience using AI.",
+        "An IntelliJ IDEA plugin that improves commit message writing with AI assistance.",
       technologies: ["Kotlin", "AI"],
-      image: "/ai-commit.webp",
-      video: "",
       links: [
         {
           type: "Website",
@@ -121,16 +138,17 @@ export const DATA = {
           icon: <Icons.globe className="size-3" />,
         },
       ],
+      image: "/ai-commit.webp",
+      video: "",
     },
     {
       title: "AndroidFilePicker",
       href: "https://github.com/rosuH/AndroidFilePicker",
       dates: "December 2018 - Present",
+      active: true,
       description:
-        "An open-source file picker library for Android, providing a smooth and efficient file selection experience.",
+        "An open-source Android file picker library with a smooth and efficient selection experience.",
       technologies: ["Kotlin", "Android"],
-      image: "/afp.webp",
-      video: "",
       links: [
         {
           type: "GitHub",
@@ -138,21 +156,23 @@ export const DATA = {
           icon: <Icons.github className="size-3" />,
         },
       ],
+      image: "/afp.webp",
+      video: "",
     },
   ],
-  hackathons: [],
-  talks: [
+  hackathons: [
     {
-      title: "KotlinConf'24 Shenzhen",
-      description: "Presented on 'Building Kotlin Multiplatform Cross-Platform UI from Scratch'.",
+      title: "KotlinConf 2024 Shenzhen",
       dates: "June 22, 2024",
       location: "Shenzhen, China",
+      description:
+        "Presented a session on building Kotlin Multiplatform cross-platform UI from scratch.",
       image: "/kotlin_conf_2024.webp",
       links: [
         {
-          title: "GitHub",
+          title: "Code",
           href: "https://github.com/rosuH/Playground/tree/main/KotlinConf24/KMPUI",
-          icon: <Icons.github className="size-3" />,
+          icon: <Icons.github className="h-4 w-4" />,
         },
       ],
     },
