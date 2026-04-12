@@ -1,9 +1,11 @@
 import { Icons } from "@/components/icons";
 import { HomeIcon, NotebookIcon } from "lucide-react";
+import { Android } from "@/components/ui/svgs/android";
 import { Java } from "@/components/ui/svgs/java";
-import { Nodejs } from "@/components/ui/svgs/nodejs";
+import { JetpackCompose } from "@/components/ui/svgs/jetpackCompose";
+import { Kotlin } from "@/components/ui/svgs/kotlin";
+import { KotlinMultiplatform } from "@/components/ui/svgs/kotlinMultiplatform";
 import { Python } from "@/components/ui/svgs/python";
-import { Typescript } from "@/components/ui/svgs/typescript";
 
 export const DATA = {
   name: "rosu",
@@ -18,14 +20,12 @@ export const DATA = {
     "I have 6+ years of experience building Android products with a focus on live streaming and RTC. I currently work at [Tencent Music Entertainment](https://www.tencentmusic.com/en-us/) and enjoy shipping reliable mobile infrastructure and developer-friendly abstractions.",
   avatarUrl: "/me.png",
   skills: [
-    { name: "Kotlin", icon: undefined },
+    { name: "Kotlin", icon: Kotlin },
     { name: "Java", icon: Java },
-    { name: "Android", icon: undefined },
-    { name: "Jetpack Compose", icon: undefined },
-    { name: "Kotlin Multiplatform", icon: undefined },
+    { name: "Android", icon: Android },
+    { name: "Jetpack Compose", icon: JetpackCompose },
+    { name: "Kotlin Multiplatform", icon: KotlinMultiplatform },
     { name: "Python", icon: Python },
-    { name: "TypeScript", icon: Typescript },
-    { name: "Node.js", icon: Nodejs },
   ],
   navbar: [
     { href: "/", icon: HomeIcon, label: "Home" },
