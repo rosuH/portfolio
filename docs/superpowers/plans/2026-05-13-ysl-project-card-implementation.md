@@ -20,8 +20,8 @@
 Run:
 
 ```bash
-cp /Users/rosu/Downloads/banner.png /tmp/ysl-banner-source.png
-sips -Z 1600 /tmp/ysl-banner-source.png --out public/ysl-banner.png >/dev/null
+cp <path-to-provided-banner> /tmp/ysl-banner-source.png
+<resize-the-image-to-a-web-friendly-width-around-1600px> /tmp/ysl-banner-source.png > public/ysl-banner.png
 ```
 
 Expected: `public/ysl-banner.png` exists with a smaller web-friendly size than the original source.

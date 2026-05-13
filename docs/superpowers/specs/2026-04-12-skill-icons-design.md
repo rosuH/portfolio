@@ -30,7 +30,7 @@ Add icons for the `Kotlin`, `Android`, `Jetpack Compose`, and `Kotlin Multiplatf
 
 - `src/data/resume.tsx` remains the single source of truth for skill badge definitions
 - The four target skills receive icon references through the `icon` field
-- Existing skills and icons remain unchanged
+- Other profile-content changes should be treated as separate follow-up edits rather than part of the icon rollout itself
 
 ## Files
 

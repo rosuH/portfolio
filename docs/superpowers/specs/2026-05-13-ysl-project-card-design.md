@@ -31,7 +31,7 @@ Add a new `YSL` project card to the portfolio projects section using the provide
 
 ### 3. Banner handling
 
-- Use `/Users/rosu/Downloads/banner.png` as the source artwork
+- Use the provided YSL banner artwork as the source image
 - Copy it into the portfolio as a local static asset under `public/`
 - Downscale or re-encode it only as needed for reasonable web payload while preserving the current composition and legibility of the specimen-card layout shown in the banner
 
