@@ -1,9 +1,12 @@
 import { Icons } from "@/components/icons";
 import { HomeIcon, NotebookIcon } from "lucide-react";
+import { Android } from "@/components/ui/svgs/android";
 import { Java } from "@/components/ui/svgs/java";
-import { Nodejs } from "@/components/ui/svgs/nodejs";
+import { JetpackCompose } from "@/components/ui/svgs/jetpackCompose";
+import { Kotlin } from "@/components/ui/svgs/kotlin";
+import { KotlinMultiplatform } from "@/components/ui/svgs/kotlinMultiplatform";
+import { LangGraph } from "@/components/ui/svgs/langGraph";
 import { Python } from "@/components/ui/svgs/python";
-import { Typescript } from "@/components/ui/svgs/typescript";
 
 export const DATA = {
   name: "rosu",
@@ -13,19 +16,18 @@ export const DATA = {
   locationLink:
     "https://www.google.com/maps/place/Shenzhen,+Guangdong+Province,+China",
   description:
-    "Senior Android engineer focused on real-time audio/video features and Kotlin Multiplatform.",
+    "Senior Android engineer with 6+ years in live audio/video and RTC, now building creative agent systems at TikTok.",
   summary:
-    "I have 6+ years of experience building Android products with a focus on live streaming and RTC. I currently work at [Tencent Music Entertainment](https://www.tencentmusic.com/en-us/) and enjoy shipping reliable mobile infrastructure and developer-friendly abstractions.",
+    "I’m a senior Android engineer with 6+ years of experience shipping Android products, live streaming features, and RTC systems. Since March 2026, I’ve been at [TikTok](https://www.tiktok.com/) building creative agent systems, focused mainly on backend engineering.",
   avatarUrl: "/me.png",
   skills: [
-    { name: "Kotlin", icon: undefined },
+    { name: "Kotlin", icon: Kotlin },
     { name: "Java", icon: Java },
-    { name: "Android", icon: undefined },
-    { name: "Jetpack Compose", icon: undefined },
-    { name: "Kotlin Multiplatform", icon: undefined },
+    { name: "Android", icon: Android },
+    { name: "Jetpack Compose", icon: JetpackCompose },
+    { name: "Kotlin Multiplatform", icon: KotlinMultiplatform },
     { name: "Python", icon: Python },
-    { name: "TypeScript", icon: Typescript },
-    { name: "Node.js", icon: Nodejs },
+    { name: "LangGraph", icon: LangGraph },
   ],
   navbar: [
     { href: "/", icon: HomeIcon, label: "Home" },
@@ -58,6 +60,19 @@ export const DATA = {
 
   work: [
     {
+      company: "TikTok",
+      href: "https://www.tiktok.com/",
+      badges: [],
+      location: "Shenzhen, China",
+      title: "Senior Software Engineer, Creative Agent Systems",
+      logoUrl: "/tiktok-light.png",
+      darkLogoUrl: "/tiktok-dark.png",
+      start: "March 2026",
+      end: "Present",
+      description:
+        "Building creative agent systems, focused mainly on backend engineering for AI-driven creative workflows.",
+    },
+    {
       company: "Tencent Music Entertainment Group",
       href: "https://www.tencentmusic.com/en-us/",
       badges: [],
@@ -65,7 +80,7 @@ export const DATA = {
       title: "Senior Android Software Engineer",
       logoUrl: "/tme.webp",
       start: "October 2021",
-      end: "Present",
+      end: "February 2026",
       description:
         "Led development of live streaming, real-time audio/video interaction, and PK features. Drove Kotlin Multiplatform exploration and implementation to improve cross-platform development efficiency.",
     },
@@ -105,6 +120,24 @@ export const DATA = {
     },
   ],
   projects: [
+    {
+      title: "YSL",
+      href: "https://ysl.rosuh.me/atlas/",
+      dates: "2025 · Listening Atlas",
+      active: true,
+      description:
+        "A browsable Yellowstone Sound Atlas that turns the park's public sound library into a shareable listening experience. The project includes the crawler, archive pipeline, and a static specimen-style interface for exploring field recordings.",
+      technologies: ["Python", "Static Web", "Data Collection"],
+      links: [
+        {
+          type: "GitHub",
+          href: "https://github.com/rosuH/YSL",
+          icon: <Icons.github className="size-3" />,
+        },
+      ],
+      image: "/ysl-banner.png",
+      video: "",
+    },
     {
       title: "Easy Watermark",
       href: "https://github.com/rosuH/EasyWatermark",
