@@ -106,6 +106,24 @@ export const DATA = {
   ],
   projects: [
     {
+      title: "YSL",
+      href: "https://ysl.rosuh.me/atlas/",
+      dates: "2025 · Listening Atlas",
+      active: true,
+      description:
+        "A browsable Yellowstone Sound Atlas that turns the park's public sound library into a shareable listening experience. The project includes the crawler, archive pipeline, and a static specimen-style interface for exploring field recordings.",
+      technologies: ["Python", "Static Web", "Data Collection"],
+      links: [
+        {
+          type: "GitHub",
+          href: "https://github.com/rosuH/YSL",
+          icon: <Icons.github className="size-3" />,
+        },
+      ],
+      image: "/ysl-banner.png",
+      video: "",
+    },
+    {
       title: "Easy Watermark",
       href: "https://github.com/rosuH/EasyWatermark",
       dates: "July 2020 - Present",
