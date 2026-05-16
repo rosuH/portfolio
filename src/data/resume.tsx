@@ -16,9 +16,9 @@ export const DATA = {
   locationLink:
     "https://www.google.com/maps/place/Shenzhen,+Guangdong+Province,+China",
   description:
-    "Senior Android engineer with 6+ years in live audio/video and RTC, now building creative agent systems at TikTok.",
+    "Software engineer at TikTok with Android/Kotlin roots, now building creative agent systems.",
   summary:
-    "I’m a senior Android engineer with 6+ years of experience shipping Android products, live streaming features, and RTC systems. Since March 2026, I’ve been at [TikTok](https://www.tiktok.com/) building creative agent systems, focused mainly on backend engineering.",
+    "Since 2019, I’ve worked on Android products, live streaming, and RTC systems. These days I build backend pieces for creative agent workflows at [TikTok](https://www.tiktok.com/), and still care a lot about Kotlin, small tools, and interfaces that stay out of the way.",
   avatarUrl: "/me.png",
   skills: [
     { name: "Kotlin", icon: Kotlin },
