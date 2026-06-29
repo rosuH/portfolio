@@ -234,3 +234,66 @@
   }
 
 }
+
+/* =================================================================
+   rosu home — scoped styles
+   Paste this block at the END of src/app/globals.css.
+   Everything is scoped under .rosu-site so it never leaks into the
+   blog or any other route. Box-sizing / body-margin are already
+   handled by Tailwind's preflight, so they're intentionally omitted.
+   ================================================================= */
+
+.rosu-site {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+.rosu-site ::selection { background: #17181b; color: #e9e7e0; }
+.rosu-site a { color: inherit; text-decoration: none; }
+
+/* persistent dot-matrix map, parked in the hero's top-right */
+.rosu-site .rosu-map {
+  position: absolute;
+  top: 4vh;
+  right: 0;
+  width: 280px;
+  height: 280px;
+  pointer-events: none;
+  z-index: 5;
+}
+@media (max-width: 920px) {
+  .rosu-site .rosu-map { display: none; }
+}
+
+.rosu-site .row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 74px 1fr auto;
+  align-items: baseline;
+  gap: 18px;
+  padding: 17px 14px;
+  border-top: 1px solid rgba(23, 24, 27, 0.14);
+  transition: background 0.25s, padding 0.25s;
+}
+.rosu-site .row:hover { background: rgba(23, 24, 27, 0.03); padding-left: 22px; }
+.rosu-site .row:hover .arw { opacity: 1; transform: translateX(0); }
+.rosu-site .row:hover .org { color: var(--accent, #2e3e86); }
+.rosu-site .row > span { position: relative; z-index: 1; }
+.rosu-site .arw {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.25s, transform 0.25s;
+  color: var(--accent, #2e3e86);
+}
+
+/* Apple-style focus blur: hovered row stays sharp, the rest soften */
+.rosu-site .fxb {
+  transition: filter 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rosu-site.fxon .fxb:not(.fxkeep) { filter: blur(5px); opacity: 0.4; }
+.rosu-site.fxon .fxkeep { filter: none; opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rosu-site [data-cursor] { display: none; }
+  .rosu-site .fxb { filter: none !important; opacity: 1 !important; }
+}
