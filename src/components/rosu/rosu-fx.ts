@@ -58,7 +58,11 @@ export function mountRosuFx(root: HTMLElement): () => void {
     });
   });
 
-  document.body.style.cursor = 'none';
+  // Only hide the native cursor when the custom cursor is active. For
+  // reduced-motion users [data-cursor] is hidden (see globals.css), so we
+  // must keep the native pointer visible or links/hover targets become
+  // unusable.
+  if (!rm) document.body.style.cursor = 'none';
   const gap = 34;
   let raf = 0, _fxOn = false;
   const loop = (now) => {
