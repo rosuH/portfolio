@@ -1,7 +1,7 @@
 "use client";
 
 // The "." after rosu: a braille spinner (⠋⠙⠹⠸⠼…) that loops forever — a
-// perpetual "loading" mark. The dot-matrix map lives on the right (rosu-map.tsx).
+// perpetual "loading" mark next to the name.
 
 import { useEffect, useRef } from "react";
 

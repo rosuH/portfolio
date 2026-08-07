@@ -9,24 +9,60 @@
 
 export function mountRosuFx(root: HTMLElement): () => void {
   const cur = root.querySelector('[data-cursor]');
-  const logo = new Image(); logo.src = '/aicommit.svg';
-  const mkI = (s) => { const im = new Image(); im.src = s; return im; };
-  const dith = { fox: mkI('/dither-fox.png'), bird: mkI('/dither-bird.png'), wolf: mkI('/dither-wolf.png') };
+
+  // Lazy asset bag — nothing is fetched until a row FX actually arms.
+  const mkI = (s, cross) => {
+    const im = new Image();
+    if (cross) im.crossOrigin = 'anonymous';
+    im.src = s;
+    return im;
+  };
+  let logo = null;
+  let dith = null;
+  let providers = null;
   const PURL = 'https://unpkg.com/@lobehub/icons-static-svg@latest/icons/';
-  const providers = [['OpenAI', 'openai.svg'], ['Claude', 'claude-color.svg'], ['Gemini', 'gemini-color.svg'], ['DeepSeek', 'deepseek-color.svg'], ['Mistral', 'mistral-color.svg'], ['Ollama', 'ollama.svg']].map((p) => { const im = new Image(); im.crossOrigin = 'anonymous'; im.src = PURL + p[1]; return { name: p[0], img: im }; });
+  const ensureFxAssets = (type) => {
+    // hub needs logo + providers; atlas needs dither animals; others are pure draw
+    if (type === 'hub') {
+      if (!logo) logo = mkI('/aicommit.svg');
+      if (!providers) {
+        providers = [
+          ['OpenAI', 'openai.svg'],
+          ['Claude', 'claude-color.svg'],
+          ['Gemini', 'gemini-color.svg'],
+          ['DeepSeek', 'deepseek-color.svg'],
+          ['Mistral', 'mistral-color.svg'],
+          ['Ollama', 'ollama.svg'],
+        ].map((p) => ({ name: p[0], img: mkI(PURL + p[1], true) }));
+      }
+    }
+    if (type === 'atlas' && !dith) {
+      dith = {
+        fox: mkI('/dither-fox.png'),
+        bird: mkI('/dither-bird.png'),
+        wolf: mkI('/dither-wolf.png'),
+      };
+    }
+  };
 
   const dotsC = root.querySelector('[data-dots]'), dctx = dotsC.getContext('2d');
   const fxC = root.querySelector('[data-fxc]'), fctx = fxC.getContext('2d');
   const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const dpr = Math.min(2, window.devicePixelRatio || 1);
   let W = 0, H = 0;
-  const resize = () => { W = window.innerWidth; H = window.innerHeight; [dotsC, fxC].forEach(c => { c.width = W * dpr; c.height = H * dpr; }); dctx.setTransform(dpr, 0, 0, dpr, 0, 0); fctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+  let dotsDirty = true;
+  const resize = () => {
+    W = window.innerWidth; H = window.innerHeight;
+    [dotsC, fxC].forEach((c) => { c.width = W * dpr; c.height = H * dpr; });
+    dctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    dotsDirty = true;
+  };
   resize(); window.addEventListener('resize', resize);
 
   let cx = W / 2, cy = H / 2, tx = W / 2, ty = H / 2;
   const xr = root.querySelector('[data-x]'), yr = root.querySelector('[data-y]');
-  const onMove = (e) => { tx = e.clientX; ty = e.clientY; if (xr) xr.textContent = String(Math.round(e.clientX)).padStart(4, '0'); if (yr) yr.textContent = String(Math.round(e.clientY)).padStart(4, '0'); };
-  window.addEventListener('pointermove', onMove, { passive: true });
+  // pointermove registered below with dirty-flag (dots throttle)
 
   const clk = root.querySelector('[data-clock]');
   const tick = () => { if (!clk) return; const d = new Date(); clk.textContent = [d.getHours(), d.getMinutes(), d.getSeconds()].map(v => String(v).padStart(2, '0')).join(':'); };
@@ -34,57 +70,229 @@ export function mountRosuFx(root: HTMLElement): () => void {
   const yy = String(new Date().getFullYear()).slice(-2);
   root.querySelectorAll('[data-since]').forEach((el) => { el.textContent = el.getAttribute('data-since') + '\u2013' + yy; });
 
-  const hx = (h) => { const n = parseInt(h.slice(1), 16); return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 }; };
-  const fx = { type: null, c: { r: 23, g: 24, b: 27 }, t0: 0, target: 0, alpha: 0, parts: [] };
+  // Row hover: JS-driven L→R progress (500ms), then arm canvas FX.
+  // Progress uses CSS var --hold; canvas FX must NOT start before hold completes.
+  const HOLD_MS = 500;
+  const hx = (h) => { const n = parseInt(String(h).replace('#', ''), 16); return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 }; };
+  const fx = { type: null, c: { r: 23, g: 24, b: 27 }, t0: 0, target: 0, alpha: 0, parts: [], armed: false };
   const initParts = () => { fx.parts = []; };
+
   const mainEl = root.querySelector('main');
   if (mainEl) mainEl.querySelectorAll(':scope > section').forEach((s) => {
-    if (s.querySelector('.row')) { const lbl = s.querySelector(':scope > div'); if (lbl) lbl.classList.add('fxb'); s.querySelectorAll('.row').forEach(r => r.classList.add('fxb')); }
-    else s.classList.add('fxb');
+    if (s.querySelector('.row')) {
+      const lbl = s.querySelector(':scope > .section-label, :scope > div');
+      if (lbl) lbl.classList.add('fxb');
+      s.querySelectorAll('.row').forEach((r) => r.classList.add('fxb'));
+    } else {
+      s.classList.add('fxb');
+    }
   });
+
   let activeRow = null;
+  let holdStart = 0; // performance.now() when hover began; 0 = idle
+  let armedFor = null; // row that has completed hold / FX armed
+
+  const setHold = (row, p) => {
+    if (row) row.style.setProperty('--hold', String(Math.max(0, Math.min(1, p))));
+  };
+  const resetHold = (row) => {
+    if (!row) return;
+    setHold(row, 0);
+  };
+
+  const armFx = (row) => {
+    if (rm || !row || activeRow !== row || armedFor === row) return;
+    const ty2 = row.getAttribute('data-fx');
+    if (!ty2) return;
+    ensureFxAssets(ty2);
+    armedFor = row;
+    fx.armed = true;
+    if (fx.type !== ty2) { fx.t0 = performance.now(); initParts(); }
+    fx.type = ty2;
+    fx.c = hx(row.getAttribute('data-c') || '#17181B');
+    fx.target = 1;
+    root.classList.add('fxon');
+    root.querySelectorAll('.fxkeep').forEach((e) => e.classList.remove('fxkeep'));
+    row.classList.add('fxkeep');
+    setHold(row, 1);
+    dotsDirty = true;
+  };
+
+  const disarmFx = () => {
+    fx.target = 0;
+    fx.armed = false;
+    armedFor = null;
+    root.classList.remove('fxon');
+    root.querySelectorAll('.fxkeep').forEach((e) => e.classList.remove('fxkeep'));
+  };
+
+  const onRowEnter = (row) => {
+    if (rm) return; // no progress / canvas FX under reduced motion
+    if (activeRow && activeRow !== row) {
+      resetHold(activeRow);
+      disarmFx();
+      if (fx.target === 0) fx.type = null;
+    }
+    activeRow = row;
+    holdStart = performance.now();
+    armedFor = null;
+    fx.armed = false;
+    resetHold(row);
+    void row.offsetWidth;
+    schedule();
+  };
+
+  const onRowLeave = (row) => {
+    if (activeRow === row) {
+      activeRow = null;
+      holdStart = 0;
+      resetHold(row);
+      disarmFx();
+      const prevType = fx.type;
+      setTimeout(() => {
+        if (!activeRow && fx.target === 0 && fx.type === prevType) fx.type = null;
+      }, 450);
+      schedule(); // allow FX alpha fade-out
+    } else {
+      resetHold(row);
+    }
+  };
+
+  const rowCleanups = [];
   root.querySelectorAll('[data-fx]').forEach((row) => {
-    row.addEventListener('pointerenter', () => {
-      if (rm) return;
-      const ty2 = row.getAttribute('data-fx');
-      if (fx.type !== ty2) { fx.t0 = performance.now(); initParts(); }
-      fx.type = ty2; fx.c = hx(row.getAttribute('data-c') || '#17181B'); fx.target = 1;
-      activeRow = row; root.classList.add('fxon');
-      root.querySelectorAll('.fxkeep').forEach(e => e.classList.remove('fxkeep')); row.classList.add('fxkeep');
-    });
-    row.addEventListener('pointerleave', () => {
-      fx.target = 0;
-      if (activeRow === row) { activeRow = null; setTimeout(() => { if (!activeRow) { root.classList.remove('fxon'); root.querySelectorAll('.fxkeep').forEach(e => e.classList.remove('fxkeep')); } }, 40); }
+    setHold(row, 0);
+    const enter = () => onRowEnter(row);
+    const leave = () => onRowLeave(row);
+    row.addEventListener('pointerenter', enter);
+    row.addEventListener('pointerleave', leave);
+    // also cover keyboard focus for a11y (optional progress)
+    row.addEventListener('focus', enter);
+    row.addEventListener('blur', leave);
+    rowCleanups.push(() => {
+      row.removeEventListener('pointerenter', enter);
+      row.removeEventListener('pointerleave', leave);
+      row.removeEventListener('focus', enter);
+      row.removeEventListener('blur', leave);
     });
   });
 
-  // Only hide the native cursor when the custom cursor is active. For
-  // reduced-motion users [data-cursor] is hidden (see globals.css), so we
-  // must keep the native pointer visible or links/hover targets become
-  // unusable.
+  // Only hide the native cursor when the custom cursor is active.
   if (!rm) document.body.style.cursor = 'none';
   const gap = 34;
   let raf = 0, _fxOn = false;
-  const loop = (now) => {
-    if (!isFinite(cx)) cx = tx; if (!isFinite(cy)) cy = ty;
-    cx += (tx - cx) * (rm ? 1 : 0.16); cy += (ty - cy) * (rm ? 1 : 0.16);
-    if (cur) cur.style.transform = 'translate(' + cx.toFixed(1) + 'px,' + cy.toFixed(1) + 'px)';
+  // Dots: redraw only when needed; rAF sleeps when fully idle.
+  let lastDotsCx = -1e9, lastDotsCy = -1e9;
+  let lastDotsAt = 0;
+  const DOTS_MIN_MS = 33;
+  const DOTS_MOVE_PX = 2;
+
+  const schedule = () => {
+    if (!raf && !document.hidden) raf = requestAnimationFrame(loop);
+  };
+
+  const onMoveDirty = (e) => {
+    tx = e.clientX; ty = e.clientY;
+    if (xr) xr.textContent = String(Math.round(e.clientX)).padStart(4, '0');
+    if (yr) yr.textContent = String(Math.round(e.clientY)).padStart(4, '0');
+    dotsDirty = true;
+    schedule();
+  };
+  window.addEventListener('pointermove', onMoveDirty, { passive: true });
+
+  const drawDots = () => {
     try {
       dctx.clearRect(0, 0, W, H);
-      for (let y = gap; y < H; y += gap) for (let x = gap; x < W; x += gap) {
-        const f = Math.max(0, 1 - Math.hypot(x - cx, y - cy) / 130);
-        dctx.fillStyle = 'rgba(23,24,27,' + ((0.03 + f * 0.16) * (1 - fx.alpha * 0.82)).toFixed(3) + ')';
-        dctx.beginPath(); dctx.arc(x, y, 0.6 + f * 0.8, 0, 7); dctx.fill();
+      // fillRect is far cheaper than arc() at ~1px radii; look is equivalent
+      for (let y = gap; y < H; y += gap) {
+        for (let x = gap; x < W; x += gap) {
+          const f = Math.max(0, 1 - Math.hypot(x - cx, y - cy) / 130);
+          const dim = fx.armed ? (1 - fx.alpha * 0.82) : 1;
+          const a = (0.03 + f * 0.16) * dim;
+          if (a < 0.01) continue;
+          const r = 0.6 + f * 0.8;
+          dctx.fillStyle = 'rgba(23,24,27,' + a.toFixed(3) + ')';
+          dctx.fillRect(x - r, y - r, r * 2, r * 2);
+        }
       }
     } catch (e) {}
-    fx.alpha += ((fx.type ? fx.target : 0) - fx.alpha) * 0.12;
-    if (fx.alpha > 0.004) {
-      try { fctx.clearRect(0, 0, W, H); if (fx.type) { fctx.globalAlpha = Math.min(1, fx.alpha); drawFx(fctx, W, H, (now - fx.t0) / 1000, fx.c, fx.type, fx.parts); fctx.globalAlpha = 1; } } catch (e) { fctx.globalAlpha = 1; }
-      _fxOn = true;
-    } else if (_fxOn) { fctx.clearRect(0, 0, W, H); _fxOn = false; }
-    raf = requestAnimationFrame(loop);
+    lastDotsCx = cx;
+    lastDotsCy = cy;
+    lastDotsAt = performance.now();
+    dotsDirty = false;
   };
-  raf = requestAnimationFrame(loop);
+
+  const loop = (now) => {
+    raf = 0;
+    if (document.hidden) return;
+
+    if (!isFinite(cx)) cx = tx; if (!isFinite(cy)) cy = ty;
+    const follow = rm ? 1 : 0.16;
+    const ncx = cx + (tx - cx) * follow;
+    const ncy = cy + (ty - cy) * follow;
+    const cursorSettling = Math.abs(ncx - cx) > 0.05 || Math.abs(ncy - cy) > 0.05;
+    cx = ncx; cy = ncy;
+    if (cur) cur.style.transform = 'translate(' + cx.toFixed(1) + 'px,' + cy.toFixed(1) + 'px)';
+
+    // Hold progress
+    if (activeRow && holdStart > 0) {
+      const p = Math.min(1, (now - holdStart) / HOLD_MS);
+      setHold(activeRow, p);
+      if (p >= 1 && armedFor !== activeRow) armFx(activeRow);
+    }
+
+    const holding = !!(activeRow && holdStart > 0 && armedFor !== activeRow);
+    const moved = Math.hypot(cx - lastDotsCx, cy - lastDotsCy) >= DOTS_MOVE_PX;
+    const due = now - lastDotsAt >= DOTS_MIN_MS;
+    if (
+      dotsDirty ||
+      fx.armed ||
+      fx.alpha > 0.004 ||
+      holding ||
+      ((moved || cursorSettling) && due) ||
+      lastDotsAt === 0
+    ) {
+      drawDots();
+    }
+
+    // Canvas FX (only after 500ms hold)
+    const wantFx = fx.armed ? 1 : 0;
+    fx.alpha += (wantFx - fx.alpha) * 0.12;
+    if (fx.alpha > 0.004 && fx.type) {
+      try {
+        fctx.clearRect(0, 0, W, H);
+        fctx.globalAlpha = Math.min(1, fx.alpha);
+        drawFx(fctx, W, H, (now - fx.t0) / 1000, fx.c, fx.type, fx.parts);
+        fctx.globalAlpha = 1;
+      } catch (e) { fctx.globalAlpha = 1; }
+      _fxOn = true;
+      dotsDirty = true;
+    } else if (_fxOn) {
+      fctx.clearRect(0, 0, W, H);
+      _fxOn = false;
+      if (!fx.armed) fx.type = null;
+      dotsDirty = true;
+    }
+
+    // Sleep when nothing is animating
+    const busy =
+      cursorSettling ||
+      holding ||
+      fx.armed ||
+      fx.alpha > 0.004 ||
+      dotsDirty ||
+      !!activeRow;
+    if (busy) schedule();
+  };
+
+  // Kick first paint, then sleep until input
+  schedule();
+  const onVis = () => {
+    if (!document.hidden) {
+      dotsDirty = true;
+      schedule();
+    }
+  };
+  document.addEventListener('visibilitychange', onVis);
 
   function drawFx(g, W, H, t, c, type, parts) {
     const A = (a) => 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + a + ')';
@@ -370,8 +578,12 @@ export function mountRosuFx(root: HTMLElement): () => void {
   return () => {
     cancelAnimationFrame(raf);
     clearInterval(ci);
+    rowCleanups.forEach((fn) => fn());
     window.removeEventListener('resize', resize);
-    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointermove', onMoveDirty);
+    document.removeEventListener('visibilitychange', onVis);
     document.body.style.cursor = '';
+    root.classList.remove('fxon');
+    if (activeRow) resetHold(activeRow);
   };
 }
