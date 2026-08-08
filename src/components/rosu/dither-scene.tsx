@@ -3,6 +3,11 @@
 /**
  * Photo Bayer dither: top-left cloud + bottom-right palm/sea.
  * Pre-baked WebP frames, ring-buffered ImageBitmaps, rAF only while visible.
+ *
+ * Night lighting (dark only):
+ *   1. full moon disc (brightest lamp) behind cloud
+ *   2. cloud/tree dither
+ *   3. moonlight wash — radiates from moon centre only
  */
 import { useEffect, useRef } from "react";
 
@@ -191,54 +196,189 @@ export default function DitherScene() {
     <div
       aria-hidden
       className="dither-scene"
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 1,
-        pointerEvents: "none",
-        overflow: "hidden",
-      }}
+      role="presentation"
     >
+      {/*
+        Night lighting (dark only):
+          1. full moon disc (brightest lamp) behind cloud
+          2. cloud/tree dither
+          3. moonlight wash — radiates from moon centre only
+      */}
+      <div className="dither-moon">
+        <span className="dither-moon__body" />
+      </div>
       <canvas
         ref={cloudRef}
         className="dither-cloud"
         width={CLOUD.w}
         height={CLOUD.h}
-        style={{
-          position: "absolute",
-          top: "-6%",
-          left: "-8%",
-          width: "min(62vw, 760px)",
-          height: "auto",
-          aspectRatio: `${CLOUD.w} / ${CLOUD.h}`,
-          opacity: 0.92,
-          imageRendering: "pixelated",
-        }}
       />
       <canvas
         ref={treeRef}
         className="dither-tree"
         width={TREE.w}
         height={TREE.h}
-        style={{
-          position: "absolute",
-          right: 0,
-          bottom: 0,
-          height: "min(72vh, 700px)",
-          width: "auto",
-          aspectRatio: `${TREE.w} / ${TREE.h}`,
-          opacity: 0.88,
-          imageRendering: "pixelated",
-        }}
       />
+      {/*
+        One light field only: everything radiates from the moon centre.
+        Sea/sand get residual intensity because they sit farther from that origin —
+        never a second lamp in the bottom-right.
+      */}
+      <div className="dither-moonlight" aria-hidden />
       <style>{`
+        .dither-scene {
+          position: fixed;
+          inset: 0;
+          z-index: 1;
+          pointer-events: none;
+          overflow: hidden;
+          /* Disc top-left; light uses the geometric centre of the disc */
+          --moon-x: clamp(4vw, 12vw, 8.5rem);
+          --moon-y: max(1vh, 2.5vh);
+          --moon-size: clamp(6.5rem, 14vw, 9.5rem);
+          --moon-cx: calc(var(--moon-x) + var(--moon-size) * 0.5);
+          --moon-cy: calc(var(--moon-y) + var(--moon-size) * 0.5);
+        }
+
+        /* --- Moon disc (behind cloud): soft, low-contrast --- */
+        .dither-scene .dither-moon {
+          position: absolute;
+          top: var(--moon-y);
+          left: var(--moon-x);
+          width: var(--moon-size);
+          height: var(--moon-size);
+          z-index: 0;
+          opacity: 0;
+          visibility: hidden;
+          transition:
+            opacity 0.55s cubic-bezier(0.34, 0, 0.18, 1),
+            visibility 0.55s;
+        }
+
+        html.dark .dither-scene .dither-moon {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        /*
+          Full moon disc = brightest object (the lamp itself).
+          Atmosphere wash stays dimmer than this core.
+        */
+        .dither-scene .dither-moon__body {
+          position: absolute;
+          inset: 12%;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle at 32% 28%,
+            oklch(97% 0.018 95 / 0.95) 0%,
+            oklch(92% 0.022 93 / 0.88) 28%,
+            oklch(82% 0.024 90 / 0.72) 58%,
+            oklch(68% 0.02 86 / 0.52) 100%
+          );
+          box-shadow:
+            0 0 0 1px oklch(96% 0.02 95 / 0.28),
+            0 0 18px oklch(92% 0.03 92 / 0.45),
+            0 0 40px oklch(84% 0.025 90 / 0.28),
+            inset -5px -7px 14px oklch(40% 0.02 250 / 0.16);
+          filter: blur(1.1px);
+        }
+
+        .dither-scene .dither-cloud {
+          position: absolute;
+          top: -6%;
+          left: -8%;
+          width: min(62vw, 760px);
+          height: auto;
+          aspect-ratio: 720 / 573;
+          opacity: 0.95;
+          image-rendering: pixelated;
+          z-index: 2;
+          transition: opacity 0.45s ease;
+        }
+
+        .dither-scene .dither-tree {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          height: min(72vh, 700px);
+          width: auto;
+          aspect-ratio: 1920 / 670;
+          opacity: 0.9;
+          image-rendering: pixelated;
+          z-index: 2;
+          transition: opacity 0.45s ease;
+        }
+
+        /*
+          Single isotropic light field, origin = moon centre.
+          Distance falloff only: cloud (near) bright, tree/sea/sand (far) residual.
+        */
+        .dither-scene .dither-moonlight {
+          position: absolute;
+          inset: 0;
+          z-index: 3;
+          opacity: 0;
+          visibility: hidden;
+          transition:
+            opacity 0.55s cubic-bezier(0.34, 0, 0.18, 1),
+            visibility 0.55s;
+          /*
+            Scene wash is secondary: peak alpha stays below the disc so the lamp
+            reads brighter than its own halo. Falloff from moon centre only.
+          */
+          background: radial-gradient(
+            circle at var(--moon-cx) var(--moon-cy),
+            oklch(90% 0.024 92 / 0.42) 0%,
+            oklch(84% 0.02 90 / 0.32) 12%,
+            oklch(76% 0.018 90 / 0.22) 26%,
+            oklch(68% 0.015 92 / 0.14) 42%,
+            oklch(60% 0.012 95 / 0.09) 58%,
+            oklch(54% 0.01 90 / 0.055) 74%,
+            oklch(50% 0.008 88 / 0.03) 88%,
+            transparent 100%
+          );
+          mix-blend-mode: soft-light;
+          filter: blur(20px);
+        }
+
+        html.dark .dither-scene .dither-moonlight {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        /* Near the source: cloud silhouette / brightness */
+        html.dark .dither-scene .dither-cloud {
+          opacity: 0.88;
+          mix-blend-mode: soft-light;
+        }
+
+        /* Farther residual: tree + sea + sand */
+        html.dark .dither-scene .dither-tree {
+          opacity: 0.78;
+          mix-blend-mode: soft-light;
+        }
+
         @media (max-width: 720px) {
           .dither-scene .dither-cloud {
-            width: 85vw !important;
-            left: -12% !important;
+            width: 85vw;
+            left: -12%;
           }
           .dither-scene .dither-tree {
-            height: 52vh !important;
+            height: 52vh;
+          }
+          .dither-scene {
+            --moon-x: 5vw;
+            --moon-y: 1vh;
+            --moon-size: clamp(5rem, 26vw, 7.5rem);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .dither-scene .dither-moon,
+          .dither-scene .dither-moonlight,
+          .dither-scene .dither-cloud,
+          .dither-scene .dither-tree {
+            transition: none;
           }
         }
       `}</style>

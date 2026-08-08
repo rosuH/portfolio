@@ -13,6 +13,7 @@ import {
   Stamp,
   type LucideIcon,
 } from "lucide-react";
+import { ModeToggle } from "@/components/mode-toggle";
 import { mountRosuFx } from "./rosu-fx";
 import RosuDot from "./rosu-dot";
 import DitherScene from "./dither-scene";
@@ -24,9 +25,8 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const dim = "rgba(23,24,27,0.48)";
 const linkStyle: CSSProperties = {
-  borderBottom: "1px solid rgba(23,24,27,0.28)",
+  borderBottom: "1px solid color-mix(in srgb, currentColor 28%, transparent)",
   paddingBottom: 2,
 };
 
@@ -123,7 +123,6 @@ export default function RosuHome() {
       ref={rootRef}
       data-site
       className={`rosu-site ${plexMono.variable}`}
-      style={{ position: "relative", minHeight: "100vh", background: "#E9E7E0", color: "#17181B" }}
     >
       <canvas data-dots style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: 0, pointerEvents: "none" }} />
       <DitherScene />
@@ -135,11 +134,16 @@ export default function RosuHome() {
         <div style={{ position: "absolute", left: 0, top: 0, width: 4, height: 4, background: "#fff", borderRadius: "50%", transform: "translate(-50%,-50%)" }} />
       </div>
 
+      {/* Theme control — top-right, always reachable (navbar dock is not on this page) */}
+      <div className="rosu-theme-toggle">
+        <ModeToggle className="rosu-theme-toggle__btn" />
+      </div>
+
       <main style={{ position: "relative", zIndex: 10, maxWidth: 1020, margin: "0 auto", padding: "0 clamp(16px,4vw,40px)" }}>
         <section style={{ position: "relative", padding: "12vh 0 10vh" }}>
-          <div style={{ fontSize: 11, letterSpacing: ".32em", color: dim }}>SOFTWARE ENGINEER&nbsp;/&nbsp;CREATIVE AGENTS</div>
+          <div className="rosu-kicker">SOFTWARE ENGINEER&nbsp;/&nbsp;CREATIVE AGENTS</div>
           <h1 style={{ fontSize: "clamp(68px,14vw,168px)", fontWeight: 500, letterSpacing: "-.05em", lineHeight: 0.86, margin: "30px 0 0" }}>rosu<RosuDot /></h1>
-          <p style={{ maxWidth: "52ch", fontSize: "clamp(14px,1.5vw,16px)", lineHeight: 1.7, color: "rgba(23,24,27,0.66)", margin: "34px 0 0" }}>
+          <p className="rosu-lede">
             I build Android products &mdash; live streaming, RTC, Kotlin Multiplatform &mdash; and now the backend behind creative-agent systems. Kotlin since 2018. KUG Shenzhen speaker.
           </p>
           <nav
@@ -257,8 +261,8 @@ export default function RosuHome() {
           </div>
         </section>
 
-        <footer style={{ padding: "6vh 0 14vh", borderTop: "1px solid rgba(23,24,27,0.12)", marginTop: "2vh" }}>
-          <span style={{ color: "rgba(23,24,27,0.4)", fontSize: 11, letterSpacing: ".14em" }}>&copy; 2026 &mdash; BUILT FROM SCRATCH</span>
+        <footer className="rosu-footer">
+          <span>&copy; 2026 &mdash; BUILT FROM SCRATCH</span>
         </footer>
       </main>
     </div>
