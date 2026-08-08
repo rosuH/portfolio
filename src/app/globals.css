@@ -120,6 +120,23 @@
     @apply bg-background text-foreground;
   }
 
+  /*
+    Theme fade — only while ModeToggle sets html.theme-animating.
+    Avoids animating first paint / late class apply from next-themes.
+  */
+  html.theme-animating body {
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.theme-animating body {
+      transition: none;
+    }
+  }
+
+
   /* Shiki dual theme support */
   .shiki,
   .shiki span {
@@ -244,24 +261,169 @@
    ================================================================= */
 
 .rosu-site {
+  --rosu-paper: #e9e7e0;
+  --rosu-ink: #17181b;
+  --rosu-ink-muted: rgba(23, 24, 27, 0.48);
+  --rosu-ink-soft: rgba(23, 24, 27, 0.66);
+  --rosu-ink-faint: rgba(23, 24, 27, 0.4);
+  --rosu-ink-year: rgba(23, 24, 27, 0.45);
+  --rosu-ink-desc: rgba(23, 24, 27, 0.55);
+  --rosu-rule: rgba(23, 24, 27, 0.16);
+  --rosu-rule-row: rgba(23, 24, 27, 0.14);
+  --rosu-rule-footer: rgba(23, 24, 27, 0.12);
+  --rosu-hover-wash: rgba(23, 24, 27, 0.02);
+  --rosu-accent-now: #2e3e86;
+  --rosu-control-bg: color-mix(in srgb, var(--rosu-paper) 88%, white);
+  --rosu-control-fg: rgba(23, 24, 27, 0.55);
+  --rosu-control-shadow: 0 8px 28px rgba(23, 24, 27, 0.08);
+
+  position: relative;
+  min-height: 100vh;
+  background: var(--rosu-paper);
+  color: var(--rosu-ink);
   font-family: var(--font-plex-mono), ui-monospace, monospace;
   -webkit-font-smoothing: antialiased;
 }
-.rosu-site ::selection { background: #17181b; color: #e9e7e0; }
+
+/* Intentional theme toggle fade (flagged by ModeToggle) */
+html.theme-animating .rosu-site {
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
+}
+html.theme-animating .rosu-site .rosu-kicker,
+html.theme-animating .rosu-site .rosu-lede,
+html.theme-animating .rosu-site .section-label,
+html.theme-animating .rosu-site .year,
+html.theme-animating .rosu-site .org,
+html.theme-animating .rosu-site .desc,
+html.theme-animating .rosu-site .rosu-footer span {
+  transition: color 0.4s ease;
+}
+html.theme-animating .rosu-site .row-list,
+html.theme-animating .rosu-site .row,
+html.theme-animating .rosu-site .rosu-footer {
+  transition: border-color 0.4s ease, background-color 0.4s ease;
+}
+html.theme-animating .rosu-site .rosu-theme-toggle__btn {
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    box-shadow 0.4s ease,
+    transform 0.2s cubic-bezier(0.34, 0, 0.18, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-animating .rosu-site,
+  html.theme-animating .rosu-site .rosu-kicker,
+  html.theme-animating .rosu-site .rosu-lede,
+  html.theme-animating .rosu-site .section-label,
+  html.theme-animating .rosu-site .year,
+  html.theme-animating .rosu-site .org,
+  html.theme-animating .rosu-site .desc,
+  html.theme-animating .rosu-site .rosu-footer span,
+  html.theme-animating .rosu-site .row-list,
+  html.theme-animating .rosu-site .row,
+  html.theme-animating .rosu-site .rosu-footer,
+  html.theme-animating .rosu-site .rosu-theme-toggle__btn {
+    transition: none;
+  }
+}
+
+html.dark .rosu-site {
+  --rosu-paper: oklch(0.18 0.008 252);
+  --rosu-ink: oklch(0.94 0.01 95);
+  --rosu-ink-muted: oklch(0.94 0.01 95 / 0.48);
+  --rosu-ink-soft: oklch(0.94 0.01 95 / 0.66);
+  --rosu-ink-faint: oklch(0.94 0.01 95 / 0.4);
+  --rosu-ink-year: oklch(0.94 0.01 95 / 0.45);
+  --rosu-ink-desc: oklch(0.94 0.01 95 / 0.55);
+  --rosu-rule: oklch(0.94 0.01 95 / 0.14);
+  --rosu-rule-row: oklch(0.94 0.01 95 / 0.12);
+  --rosu-rule-footer: oklch(0.94 0.01 95 / 0.1);
+  --rosu-hover-wash: oklch(1 0 0 / 0.03);
+  --rosu-accent-now: oklch(0.72 0.09 250);
+  --rosu-control-bg: oklch(0.24 0.01 252);
+  --rosu-control-fg: oklch(0.94 0.01 95 / 0.7);
+  --rosu-control-shadow: 0 10px 32px oklch(0 0 0 / 0.35);
+}
+
+.rosu-site ::selection {
+  background: var(--rosu-ink);
+  color: var(--rosu-paper);
+}
 .rosu-site a { color: inherit; text-decoration: none; }
+
+/* Fixed theme toggle (home has no dock navbar) */
+.rosu-site .rosu-theme-toggle {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 50;
+  pointer-events: auto;
+}
+.rosu-site .rosu-theme-toggle__btn {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: var(--rosu-control-bg);
+  color: var(--rosu-control-fg);
+  box-shadow: var(--rosu-control-shadow);
+  text-decoration: none;
+  opacity: 1;
+  /* No color transition on the control itself — avoids icon wash/flash during theme swap */
+  transition: transform 0.2s cubic-bezier(0.34, 0, 0.18, 1);
+}
+.rosu-site .rosu-theme-toggle__btn:hover {
+  color: var(--rosu-ink);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+.rosu-site .rosu-theme-toggle__btn:active {
+  transform: translateY(0);
+}
+.rosu-site .rosu-theme-toggle__btn svg {
+  width: 16px;
+  height: 16px;
+  /* Icon motion only; color inherits instantly with theme tokens */
+  transition: transform 0.2s ease-out;
+}
+
+.rosu-site .rosu-kicker {
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  color: var(--rosu-ink-muted);
+}
+.rosu-site .rosu-lede {
+  max-width: 52ch;
+  font-size: clamp(14px, 1.5vw, 16px);
+  line-height: 1.7;
+  color: var(--rosu-ink-soft);
+  margin: 34px 0 0;
+}
+.rosu-site .rosu-footer {
+  padding: 6vh 0 14vh;
+  border-top: 1px solid var(--rosu-rule-footer);
+  margin-top: 2vh;
+}
+.rosu-site .rosu-footer span {
+  color: var(--rosu-ink-faint);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
 
 /* section heading */
 .rosu-site .section-label {
   font-size: 11px;
   letter-spacing: 0.28em;
-  color: rgba(23, 24, 27, 0.48);
+  color: var(--rosu-ink-muted);
   padding: 0 14px 10px;
 }
 
 /* list shell: top + bottom rules so the block reads as one unit */
 .rosu-site .row-list {
-  border-top: 1px solid rgba(23, 24, 27, 0.16);
-  border-bottom: 1px solid rgba(23, 24, 27, 0.16);
+  border-top: 1px solid var(--rosu-rule);
+  border-bottom: 1px solid var(--rosu-rule);
 }
 
 .rosu-site .row {
@@ -272,7 +434,7 @@
   align-items: baseline;
   gap: 18px;
   padding: 17px 14px;
-  border-top: 1px solid rgba(23, 24, 27, 0.14);
+  border-top: 1px solid var(--rosu-rule-row);
   transition: background 0.25s, padding 0.25s;
   /* --hold: 0..1, driven by JS (progress before canvas FX) */
   --hold: 0;
@@ -282,7 +444,7 @@
 }
 .rosu-site .row:hover {
   /* Light wash only — the real hover feedback is the L→R fill (::after) */
-  background: rgba(23, 24, 27, 0.02);
+  background: var(--rosu-hover-wash);
   padding-left: 22px;
 }
 .rosu-site .row:hover .row-icon {
@@ -327,11 +489,11 @@
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: rgba(23, 24, 27, 0.45);
+  color: var(--rosu-ink-year);
   line-height: 1.3;
 }
 .rosu-site .year--now {
-  color: #2e3e86;
+  color: var(--rosu-accent-now);
 }
 
 /* title + description stacked in the middle track */
@@ -347,13 +509,13 @@
   font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 1.3;
-  color: #17181b;
+  color: var(--rosu-ink);
 }
 .rosu-site .desc {
   font-size: 13px;
   font-weight: 400;
   line-height: 1.45;
-  color: rgba(23, 24, 27, 0.55);
+  color: var(--rosu-ink-desc);
 }
 
 /* Right-side icon: hidden until row hover */

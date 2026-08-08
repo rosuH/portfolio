@@ -51,7 +51,11 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-screen bg-background font-sans antialiased relative"
       >
-        <ThemeProvider attribute="class" defaultTheme="system">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+        >
           <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
         </ThemeProvider>
       </body>
