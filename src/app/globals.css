@@ -366,9 +366,9 @@ html.dark .rosu-site {
   width: 2.75rem;
   height: 2.75rem;
   border-radius: 999px;
-  background: var(--rosu-control-bg);
+  background: transparent;
   color: var(--rosu-control-fg);
-  box-shadow: var(--rosu-control-shadow);
+  box-shadow: none;
   text-decoration: none;
   opacity: 1;
   /* No color transition on the control itself — avoids icon wash/flash during theme swap */
@@ -376,7 +376,7 @@ html.dark .rosu-site {
 }
 .rosu-site .rosu-theme-toggle__btn:hover {
   color: var(--rosu-ink);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   text-decoration: none;
 }
 .rosu-site .rosu-theme-toggle__btn:active {
@@ -385,6 +385,7 @@ html.dark .rosu-site {
 .rosu-site .rosu-theme-toggle__btn svg {
   width: 16px;
   height: 16px;
+  image-rendering: pixelated;
   /* Icon motion only; color inherits instantly with theme tokens */
   transition: transform 0.2s ease-out;
 }
